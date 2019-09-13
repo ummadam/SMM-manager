@@ -41,20 +41,26 @@ class Tasks
                         `id_account`,
                         `id_user`,
                         `title`,
-                        `description`
+                        `description`,
+                        `publish_date`
                         
                     ) VALUES (
                         :id_account,
                         :id_user,
                         :title,
-                        :description
+                        :description,
+                        :publish_date
                     )
             ");
+            $date = new \DateTime($_POST['publish_date']);
+            
             $stmt->execute([
                 ':id_account' => $_POST['id_account'],
                 ':id_user' => $_SESSION['auth']['id'],
                 ':title' => $_POST['title'],
-                ':description' => $_POST['description']
+                ':description' => $_POST['description'],
+                ':publish_date' => $date->format('Y.m.d H:i:s')
+                
             ]);
 
             $uploadFile = UPLOAD_DIR . sha1($pdo->lastInsertId()).'.jpeg';
@@ -121,16 +127,21 @@ class Tasks
                 UPDATE
                     `tasks`
                 SET
-                    `login` = :login,
-                    `password` = :password
+                    `id_account` = :id_account,                   
+                    `title` = :title,
+                    `description` = :description,
+                    `publish_date` = :publish_date
                 WHERE
                     `id` = :id AND `id_user` = :id_user
             ");
-            $stmt->execute([
-                ':login' => $_POST['login'],
-                ':password' => $_POST['password'],
+            $date = new \DateTime($_POST['publish_date']);
+            $stmt->execute([                
                 ':id' => $_GET['id'],
-                ':id_user' => $_SESSION['auth']['id']
+                ':id_user' => $_SESSION['auth']['id'],
+                ':id_account' => $_POST['id_account'],
+                'title' => $_POST['title'],
+                'description' => $_POST['description'],
+                'publish_date' => $date->format('Y.m.d H:i:s')
             ]);
 
             header('Location: /tasks');
@@ -140,7 +151,8 @@ class Tasks
         $view = new \App\View\Tasks\Form();
         $view->render([
             'data' => $account,
-            'update' => $account['id']
+            'update' => $account['id'],
+            'accounts' => $this->getAccounts()
         ]);
     }
 
@@ -150,7 +162,7 @@ class Tasks
             $pdo = \App\Service\DB::get();
             $stmt = $pdo->prepare("
                 DELETE FROM
-                    `accounts`
+                    `tasks`
                 WHERE
                     `id` = :id AND `id_user` = :id_user
             ");
@@ -161,7 +173,7 @@ class Tasks
             $user = $stmt->fetch();
         }
 
-        header('Location: /accounts');
+        header('Location: /tasks');
     }
 
     private function validateCreateTask($data)

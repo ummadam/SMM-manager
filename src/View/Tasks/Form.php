@@ -21,7 +21,7 @@ class Form extends \App\View\Main
                         <div class="form-group <?= isset($data['errors']['title']) ? 'has-error' : '' ?>">
                             <div class="col-sm-9">
                                 <div class="form-material">
-                                    <input class="form-control" type="text" id="material-text" name="title" placeholder="Please enter your login" value="<?= $data['data']['login'] ?? '' ?>">
+                                    <input class="form-control" type="text" id="material-text" name="title" placeholder="Please enter your title" value="<?= $data['data']['title'] ?? '' ?>">
                                     <label for="material-text">Title</label>
                                     <?= isset($data['errors']['title']) ? '<div class="help-block text-right">' . $data['errors']['title'] . '</div>' : '' ?>
                                 </div>
@@ -32,7 +32,7 @@ class Form extends \App\View\Main
                                 <div class="form-material">
                                 <textarea class="form-control" id="material-textarea-large" name="description" rows="8" placeholder="Please add a comment"><?= $data['data']['description'] ?? '' ?></textarea>
                                     <label for="material-text">Description</label>
-                                    <?= isset($data['errors']['title']) ? '<div class="help-block text-right">' . $data['errors']['title'] . '</div>' : '' ?>
+                                    <?= isset($data['errors']['description']) ? '<div class="help-block text-right">' . $data['errors']['description'] . '</div>' : '' ?>
                                 </div>
                             </div>
                         </div> 
@@ -55,7 +55,8 @@ class Form extends \App\View\Main
                         <div class="form-group">
                             <div class="col-md-8">
                                 <div class="js-datetimepicker form-material input-group date" data-show-today-button="true" data-show-clear="true" data-show-close="true">
-                                    <input class="form-control" type="text" id="example-datetimepicker7" name="publish_date" placeholder="Choose a date..">
+                                    <?php $date = new \DateTime($data['data']['publish_date']); ?>
+                                    <input class="form-control" type="text" id="example-datetimepicker7" name="publish_date" placeholder="Choose a date.." value="<?= $date->format('m/d/Y H:i A') ?? '' ?>">
                                     <label for="example-datetimepicker7">Publish date</label>
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                 </div>
